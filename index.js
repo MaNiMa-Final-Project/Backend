@@ -1,10 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { connectToDb } from './service/db.service.js';
-import authRouter from './routes/auth.route.js';
-import protectedRouter from './routes/protected.route.js';
 
+import authRouter from './src/routes/auth.route.js';
+import protectedRouter from './src/routes/protected.route.js';
+
+import { connectToDb } from './src/service/db.service.js';
+import { seedRoles } from './src/model/role.model.js';
+//import { startMailService } from './src/service/mailVerification.js';
 
 // Lade Umgebungsvariablen  aus der .env Datei
 dotenv.config();
@@ -18,10 +21,8 @@ app.use(express.json());
 // Middleware fuer CROSS-ORIGIN-REQUEST
 app.use(cors({
     origin: 'http://localhost:5174',
-    // credentials: true
+    credentials: true
 }));
-
-
 
 // --------------------- ROUTES -------------------------
 
@@ -32,7 +33,10 @@ app.use('/protected', protectedRouter);
 
 // Einmalig Verbindung ueber default Connection aufbauen
 // es kann noch ein Callback mitgeliefert werden
-await connectToDb();
+await connectToDb(seedRoles);
+
+//await startMailService();
+
 
 // ----------------------------------------------------------
 // Starte Server auf in der Config hinterlegtem Port

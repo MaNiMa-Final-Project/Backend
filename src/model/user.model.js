@@ -25,6 +25,11 @@ export async function findUserById(userId) {
     return await User.findOne({_id:userId});
 }
 
+// Findet einen Benutzer anhand der E-Mail-Adresse
+export async function findUserByMail(email) {
+    return await User.findOne({email: email});
+}
+
 // DB-Funktion zum Erstellen eines neuen User-Eintrags
 export async function insertNewUser(userBody) {
     try {

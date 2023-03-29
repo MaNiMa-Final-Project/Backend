@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { registerNewUser, loginUser} from "../controller/user.controller.js";
+
 
 
 
@@ -7,11 +9,11 @@ const authRouter = Router();
 
 // Routen Definition fuer /register
 authRouter.route('/register')
-    .post()
+    .post(registerNewUser)
 
 // Routen Definition fuer /login
 authRouter.route('/login')
-    .post()
+    .post(loginUser)
 
 
 export default authRouter;
