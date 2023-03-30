@@ -23,7 +23,7 @@ export async function findUserByUsername(nickName) {
     if(!user) throw new Error(`User with ${nickName} not found!`, {cause: 404});
     return user;
 }
-
+//DB-Funktion zum Abrufen eines bestimmten User-Eintrags per ID
 export async function findUserById(userId) {
     let user = await User.findOne({_id: userId});
     if(!user) throw new Error(`User with ${userId} not found!`, {cause: 404});
