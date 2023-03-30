@@ -1,34 +1,40 @@
 import mongoose from "mongoose";
 
-// Definiere Todo Schema
-// ---------------weitere Userinfo erstellen-----------!!
-
 const userSchema = mongoose.Schema({
 
-    username: { type: String, required: true, unique: true },
+    nickName: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    firstname: { type: String, required: true, },
-    lastname: { type: String, required: true, }
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    attendedCourses: [{type: mongoose.Types.ObjectId, ref: 'Courses'}],
+    upcomingCourses: [{type: mongoose.Types.ObjectId, ref: 'Courses'}],
+    notedCourses: [{type: mongoose.Types.ObjectId, ref: 'Courses'}],
+
     
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);
 
+//?-----BasicFunctions-----
 
-// DB-Funktion zum Abrufen eines bestimmten User-Eintrags per username
-export async function findUserByUsername(username) {
-    return await User.findOne({username: username});
+export async function findUserByUsername(nickName) {
+    return await User.findOne({nickName: nickName});
 }
 //DB-Funktion zum Abrufen eines bestimmten User-Eintrags per ID
 export async function findUserById(userId) {
-    return await User.findOne({_id:userId});
+    return await User.findOne({_id: userId});
 }
 
-// Findet einen Benutzer anhand der E-Mail-Adresse
 export async function findUserByMail(email) {
     return await User.findOne({email: email});
 }
+
+export async function getAllUsers() {
+    return await User.find();
+}
+
+//?-----AdvancedFunctions-----
 
 // DB-Funktion zum Erstellen eines neuen User-Eintrags
 export async function insertNewUser(userBody) {
@@ -40,7 +46,6 @@ export async function insertNewUser(userBody) {
         return await newUser.save();
 
     } catch (error) {
-        console.log("🚀 ~ file: user.model.js:28 ~ insertNewUser ~ error:", error)
         // Pruefe, ob Conflict durch Dupletten-Verletzung
         if ( (error.hasOwnProperty('code')) && (error.code === 11000) ) {
             // Schmeisse entsprechendes Fehlerobjekt
@@ -48,7 +53,6 @@ export async function insertNewUser(userBody) {
                 code: 409,
                 message: error.message
             };
-
         } else {
             // Muss ein Validierungsproblem sein
             // sende entsprechendes Fehlerobjekt
@@ -60,7 +64,3 @@ export async function insertNewUser(userBody) {
     }
 }
 
-// DB-Funktion zum Abrufen aller User-Eintraege
-export async function getAll() {
-    return await User.find();
-}
