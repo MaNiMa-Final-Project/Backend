@@ -50,7 +50,8 @@ export async function seedRoles() {
 
 
 
-// -------------------- Model-Functions --------------------
+//?-----BasicFunctions-----
+
 export async function getAll() {
     return await Role.find();
 }

@@ -19,15 +19,21 @@ const User = mongoose.model('User', userSchema);
 //?-----BasicFunctions-----
 
 export async function findUserByUsername(nickName) {
-    return await User.findOne({nickName: nickName});
+    let user = await User.findOne({nickName: nickName});
+    if(!user) throw new Error(`User with ${nickName} not found!`, {cause: 404});
+    return user;
 }
 //DB-Funktion zum Abrufen eines bestimmten User-Eintrags per ID
 export async function findUserById(userId) {
-    return await User.findOne({_id: userId});
+    let user = await User.findOne({_id: userId});
+    if(!user) throw new Error(`User with ${userId} not found!`, {cause: 404});
+    return user;
 }
 
 export async function findUserByMail(email) {
-    return await User.findOne({email: email});
+    let user = await User.findOne({email: email});
+    if(!user) throw new Error(`User with ${email} not found!`, {cause: 404});
+    return user;
 }
 
 export async function getAllUsers() {
