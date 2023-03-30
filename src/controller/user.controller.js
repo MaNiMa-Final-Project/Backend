@@ -1,7 +1,10 @@
 import bcrypt from 'bcrypt';
-import md5 from 'md5';
+import jwt from "jsonwebtoken";
+import md5 from "md5";
+import { findByName } from '../model/role.model.js';
 import generateJsonWebToken from '../service/jwt/jwt.generateJsonWebToken.js';
 import sendVerificationEmail from '../service/mailVerification.js';
+
 
 import * as UserModel from "../model/user.model.js";
 import { findByName } from '../model/role.model.js';
@@ -25,7 +28,7 @@ export async function registerNewUser(req, res) {
 
         let payload = {
             id: user._id,
-            name: user.nickName,
+            name: user.username,
             role: userRole.name
         }
 

@@ -12,4 +12,5 @@ function generateJsonWebToken(payload, duration) {
     return jwt.sign(payload, process.env.JWT_SECRET, options);
 }
 
+
 export default generateJsonWebToken;

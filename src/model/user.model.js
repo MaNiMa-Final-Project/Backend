@@ -2,9 +2,7 @@ import mongoose from "mongoose";
 
 const userSchema = mongoose.Schema({
 
-    //todo after development -> ADD UNIQUE
-
-    nickName: { type: String, required: true},
+    nickName: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     email: { type: String, required: true },
     firstName: { type: String, required: true },
@@ -20,6 +18,7 @@ const User = mongoose.model('User', userSchema);
 
 //?-----BasicFunctions-----
 
+// DB-Funktion zum Abrufen eines bestimmten User-Eintrags per nickName
 export async function findUserByUsername(nickName) {
     let user = await User.findOne({nickName: nickName});
     if(!user) throw new Error(`User with ${nickName} not found!`, {cause: 404});
@@ -32,12 +31,14 @@ export async function findUserById(userId) {
     return user;
 }
 
+//DB-Funktion zum Abrufen eines bestimmten User-Eintrags per e-mail
 export async function findUserByMail(email) {
     let user = await User.findOne({email: email});
     if(!user) throw new Error(`User with ${email} not found!`, {cause: 404});
     return user;
 }
 
+//DB-Funktion zum Abrufen aller User
 export async function getAllUsers() {
     return await User.find();
 }
