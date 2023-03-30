@@ -30,13 +30,13 @@ export async function findRawCommentByTitle(title) {
 //?-----AdvancedFunctions-----
 
 
-
+// DB-Funktion zum Erstellen eines neuen Kommentares  
 export async function insertNewComment(commentBody) {
     try {
-        
+// Erstelle neue Instanz des Comment Models
         const newComment = new Comment(commentBody);
 
-        
+// Speichere neue Instanz       
         return await newComment.save();
 
     } catch (error) {
