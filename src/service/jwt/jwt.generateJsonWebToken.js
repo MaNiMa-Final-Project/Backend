@@ -7,7 +7,10 @@ import jwt from 'jsonwebtoken';
  * @param {string} duration The duration for which the JWT will be valid
  * @returns {string} The generated JWT
  */
-export function generateJsonWebToken(payload, duration) {
+function generateJsonWebToken(payload, duration) {
     const options = { expiresIn: `${duration}` };
     return jwt.sign(payload, process.env.JWT_SECRET, options);
 }
+
+
+export default generateJsonWebToken;
