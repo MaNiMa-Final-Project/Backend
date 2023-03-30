@@ -6,7 +6,9 @@ import verifyToken from "../service/jwt/jwt.verifyToken.js";
 const authRouter = Router();
 
 authRouter.route('/status')
-    .get(verifyToken, () => {success: true});
+    .get(verifyToken, (req, res) => {
+        res.send({ success: true, message: 'Valid token' });
+    });
 
 // Routen Definition fuer /register
 authRouter.route('/register')

@@ -12,15 +12,13 @@ import jwt from 'jsonwebtoken';
 
 
 function verifyToken(req, res, next) {
+
     if (!req.cookies.access_token) return res.status(200).send({success: false, message: 'Token missing'});
     let cookieToken = req.cookies.access_token.split(' ')[1];
 
     jwt.verify(cookieToken, process.env.JWT_SECRET, (err, payload) => {
-
         if (err) return res.status(401).send({success: false, message: 'Invalid token'});
-        
         req.tokenPayload = payload;
-
         next();
     });
 }

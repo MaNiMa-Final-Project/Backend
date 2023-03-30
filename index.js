@@ -7,6 +7,7 @@ import protectedRouter from './src/routes/protected.route.js';
 
 import { connectToDb } from './src/service/db.service.js';
 import { seedRoles } from './src/model/role.model.js';
+import cookieParser from 'cookie-parser';
 //import { startMailService } from './src/service/mailVerification.js';
 
 // Lade Umgebungsvariablen  aus der .env Datei
@@ -17,6 +18,7 @@ const app = express();
 
 // Middleware fuer das body-Parsing
 app.use(express.json());
+app.use(cookieParser());
 
 // Middleware fuer CROSS-ORIGIN-REQUEST
 app.use(cors({
@@ -43,3 +45,4 @@ await connectToDb(seedRoles);
 app.listen(process.env.API_PORT, () => {
     console.log(`Server is listening on http://localhost:${process.env.API_PORT}`);
 });
+
