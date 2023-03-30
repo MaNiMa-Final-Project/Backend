@@ -38,7 +38,6 @@ export async function findRawCourseById(courseId) {
 // DB-Funktion zum Erstellen eines neuen Kurs-Eintrags
 export async function insertNewCourse(courseBody) {
     try {
-       
         // Erstelle neue Instanz des Event Models
         const newCourse = new Course(courseBody);
 
