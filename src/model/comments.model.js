@@ -28,3 +28,31 @@ export async function findRawCommentByTitle(title) {
 
 
 //?-----AdvancedFunctions-----
+
+
+
+export async function insertNewComment(commentBody) {
+    try {
+        
+        const newComment = new Comment(commentBody);
+
+        
+        return await newComment.save();
+
+    } catch (error) {
+        
+        if ( (error.hasOwnProperty('code')) && (error.code === 11000) ) {
+           
+            throw {
+                code: 409,
+                message: error.message
+            };
+        } else {
+           
+            throw {
+                code: 400,
+                message: error.message
+            };
+        }
+    }
+}
