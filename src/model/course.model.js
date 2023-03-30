@@ -20,13 +20,13 @@ const Course = mongoose.model('Course', courseSchema);
 //?-----BasicFunctions-----
 
 export async function findRawCourseByTitle(title) {
-    let course = await Course.findOne({title: title}).populate('participants');
+    let course = await Course.findOne({title: title});
     if(!course) throw new Error(`Course with ${title} not found!`, {cause: 404})
     return course;
 }
 
 export async function findRawCourseById(courseId) {
-    let course = await Course.findOne({_id: courseId}).populate('participants');
+    let course = await Course.findOne({_id: courseId});
     if(!course) throw new Error(`Course with ${courseId} not found!`, {cause: 404})
     return course;
 }
@@ -38,7 +38,6 @@ export async function findRawCourseById(courseId) {
 // DB-Funktion zum Erstellen eines neuen Kurs-Eintrags
 export async function insertNewCourse(courseBody) {
     try {
-       
         // Erstelle neue Instanz des Event Models
         const newCourse = new Course(courseBody);
 
