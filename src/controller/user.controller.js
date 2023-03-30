@@ -7,6 +7,7 @@ import sendVerificationEmail from '../service/mailVerification.js';
 
 
 import * as UserModel from "../model/user.model.js";
+import { findByName } from '../model/role.model.js';
 
 export async function registerNewUser(req, res) {
     let body = req.body;
@@ -25,10 +26,9 @@ export async function registerNewUser(req, res) {
         const hour = 60 * minute;
         const duration = hour * process.env.JWT_AND_COOKIE_DURATION_HOURS_REGISTER;
 
-        //todo
         let payload = {
             id: user._id,
-            name: user.nickName,
+            name: user.username,
             role: userRole.name
         }
 
@@ -79,7 +79,7 @@ export async function loginUser(req, res) {
             // Payload mit den Nutzerdaten für das Token
             let payload = {
                 id: user._id,
-                name: user.username,
+                name: user.nickName,
                 role: userRole.name
             }
 

@@ -70,28 +70,32 @@ export async function getAll() {
     return await Course.find().populate('participants');
 }
 
-
+// DB-Funktion zum Aendern eines Kurs-Eintraegs anhand der ID
 export async function modifyCourse(courseId, body) {
     return await Course.findByIdAndUpdate(courseId, body)
 }
 
-
+// DB-Funktion zum Loeschen eines Kurses anhand der ID
 export async function deleteCourse(courseId) {
     return await Course.deleteOne({_id:courseId})
 }
 
 
 export async function attendToCourseById(courseId, userId){
-    let course = await findCourseId(courseId);
+
+// hole den Kurs anhand der Kurs ID
+    let course = await getCourseById(courseId);
+// wenn Kurs mit entsprechender ID nicht da ist sende Fehlermeldung    
     if(!course) throw new Error(`Course with ID: ${courseId} not found!`, {cause: 404})
 
+// fuege den User anhand der ID als Teilnehmer des Kurses hinzu    
     course.participants.push(userId);
-
+// Füge den Kurs dem Benutzer  anhand der userId hinzu
     await addCourseToUser(courseId, userId)
-
+// speichere den aktualisierten Kurs 
     await course.save();
 
-    return await findCourseId(courseId);
+    return await getCourseById(courseId);
 }
 
 
