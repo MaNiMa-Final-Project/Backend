@@ -15,16 +15,20 @@ const courseSchema = mongoose.Schema({
 },{ timestamps: true });
     
 
-const Course = mongoose.model('User', courseSchema);
+const Course = mongoose.model('Course', courseSchema);
 
 //?-----BasicFunctions-----
 
-export async function findCourseByTitle(title) {
-    return await Course.findOne({title: title}).populate('participants');
+export async function findRawCourseByTitle(title) {
+    let course = await Course.findOne({title: title}).populate('participants');
+    if(!course) throw new Error(`Course with ${title} not found!`, {cause: 404})
+    return course;
 }
 
-export async function findCourseById(courseId) {
-    return await Course.findOne({_id: courseId}).populate('participants');
+export async function findRawCourseById(courseId) {
+    let course = await Course.findOne({_id: courseId}).populate('participants');
+    if(!course) throw new Error(`Course with ${courseId} not found!`, {cause: 404})
+    return course;
 }
 
 
