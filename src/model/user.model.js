@@ -20,7 +20,7 @@ const User = mongoose.model('User', userSchema);
 export async function findUserByUsername(username) {
     return await User.findOne({username: username});
 }
-
+//DB-Funktion zum Abrufen eines bestimmten User-Eintrags per ID
 export async function findUserById(userId) {
     return await User.findOne({_id:userId});
 }
