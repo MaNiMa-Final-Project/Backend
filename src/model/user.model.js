@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import * as RoleModel from './role.model.js';
+
 
 const userSchema = mongoose.Schema({
 
@@ -7,6 +9,8 @@ const userSchema = mongoose.Schema({
     email: { type: String, required: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
+    role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
+    verificationHash: { type: String },
     attendedCourses: [{type: mongoose.Types.ObjectId, ref: 'Courses'}],
     upcomingCourses: [{type: mongoose.Types.ObjectId, ref: 'Courses'}],
     notedCourses: [{type: mongoose.Types.ObjectId, ref: 'Courses'}],
@@ -48,28 +52,38 @@ export async function getAllUsers() {
 // DB-Funktion zum Erstellen eines neuen User-Eintrags
 export async function insertNewUser(userBody) {
     try {
-        // Erstelle neue Instanz des User Models
-        const newUser = new User(userBody);
 
-        // Speichere neue Instanz
-        return await newUser.save();
+        const role = await RoleModel.findByName(RoleModel.rolesEnum.unverified); // Findet die "unverified"-Rolle
+
+        userBody.role = role._id; // Setzt die Rolle des neuen Benutzers auf die "unverified"-Rolle
+
+        const newUser = new User(userBody); // Erstellt ein neues "User"-Objekt mit den angegebenen Benutzerdaten
+
+        return await newUser.save(); // Speichert den neuen Benutzer in der Datenbank und gibt das neue Benutzer-Objekt zurück
 
     } catch (error) {
-        // Pruefe, ob Conflict durch Dupletten-Verletzung
-        if ( (error.hasOwnProperty('code')) && (error.code === 11000) ) {
-            // Schmeisse entsprechendes Fehlerobjekt
-            throw {
-                code: 409,
-                message: error.message
-            };
-        } else {
-            // Muss ein Validierungsproblem sein
-            // sende entsprechendes Fehlerobjekt
-            throw {
-                code: 400,
-                message: error.message
-            };
-        }
+        if ( (error.hasOwnProperty('code')) && (error.code === 11000) ) { // Wenn ein eindeutiger Indexverstoß aufgetreten ist, wirft die Funktion einen Fehler mit dem Statuscode 409 (Conflict)
+            throw new Error('Username or Email already used', {cause: 409})
+        } else throw new Error('unknown problem - todo', {cause: 400})
     }
+}
+
+export async function verifyUser(emailHash) {
+
+    // Datumsobjekt fuer JETZT
+    const now = new Date();
+
+    const role = await RoleModel.findByName(RoleModel.rolesEnum.user); // Findet die "user"-Rolle
+
+    let user = await User.findOne({verificationHash: emailHash}); // Findet den Benutzer mit dem angegebenen E-Mail-Hash
+
+    if (now - user.updatedAt > (process.env.EMAIL_HASH_DURATION)) throw new Error('Token expired', {cause: 409}) // Wenn kein User gefunden ODER letztes Update des Eintrags laenger als 12 Stunden her
+
+    if (!user) throw new Error('Token invalid', {cause: 409}) // Wenn der Benutzer nicht gefunden wurde, wirft die Funktion einen Fehler mit dem Statuscode 409 (Conflict)
+
+    user.verificationHash = undefined; // Setzt den Verifizierungs-Hash des Benutzers auf "undefined"
+    user.role = role._id; // Setzt die Rolle des Benutzers auf die "user"-Rolle
+
+    return await user.save(); // Speichert den Benutzer in der Datenbank und gibt das aktualisierte Benutzer-Objekt zurück
 }
 

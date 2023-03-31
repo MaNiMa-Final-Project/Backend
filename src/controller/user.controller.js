@@ -5,7 +5,7 @@ import generateJsonWebToken from '../service/jwt/jwt.generateJsonWebToken.js';
 import sendVerificationEmail from '../service/mailVerification.js';
 
 import * as UserModel from "../model/user.model.js";
-import { findByName } from '../model/role.model.js';
+import { findById, findByName } from '../model/role.model.js';
 
 export async function registerNewUser(req, res) {
     let body = req.body;
