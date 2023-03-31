@@ -52,7 +52,7 @@ export async function registerNewUser(req, res) {
     }
 }
 
-export async function loginUser(req, res) {
+export async function userLogin(req, res) {
     let {nameOrMail, password} = req.body;
 
     try {
@@ -102,6 +102,18 @@ export async function loginUser(req, res) {
 
     } catch (error) {
         // Fehlerbehandlung
+        if(!error.cause) res.status(400).send(error.message)
+        else res.status(error.cause).send(error.message)
+    }
+}
+
+export async function userLogout(req, res) {
+
+    try {
+        res.clearCookie('access_token');
+        res.send({success: true, message: 'Logged out successfully'});
+
+    } catch (error) {
         if(!error.cause) res.status(400).send(error.message)
         else res.status(error.cause).send(error.message)
     }

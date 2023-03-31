@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerNewUser, loginUser} from "../controller/user.controller.js";
+import { registerNewUser, userLogin, userLogout } from "../controller/user.controller.js";
 import verifyToken from "../service/jwt/jwt.verifyToken.js";
 
 // Erstelle neue Router Instanz
@@ -16,7 +16,10 @@ authRouter.route('/register')
 
 // Routen Definition fuer /login
 authRouter.route('/login')
-    .post(loginUser)
+    .post(userLogin)
 
+// Routen Definition fuer /login
+authRouter.route('/logout')
+    .post(userLogout)
 
 export default authRouter;
