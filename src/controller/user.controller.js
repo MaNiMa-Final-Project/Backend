@@ -107,14 +107,14 @@ export async function userLogin(req, res) {
     }
 }
 
-export async function userLogout(req, res) {
+export async function userLogout(req, res) { // Exportiere die asynchrone Funktion "userLogout", die eine Anfrage und eine Antwort als Parameter entgegennimmt
 
     try {
-        res.clearCookie('access_token');
-        res.send({success: true, message: 'Logged out successfully'});
+        res.clearCookie('access_token'); // Lösche das Cookie "access token"
+        res.send({success: true, message: 'Logged out successfully'}); // Sende eine erfolgreiche Antwort mit einer Erfolgsmeldung
 
     } catch (error) {
-        if(!error.cause) res.status(400).send(error.message)
-        else res.status(error.cause).send(error.message)
+        if(!error.cause) res.status(400).send(error.message) // Wenn der Fehler keine Ursache hat, sende eine Fehlerantwort mit dem Fehlercode "400" und der Fehlermeldung
+        else res.status(error.cause).send(error.message) // Andernfalls sende eine Fehlerantwort mit dem Fehlercode, der in der Ursache des Fehlers angegeben ist, und der Fehlermeldung
     }
-}
+    }
