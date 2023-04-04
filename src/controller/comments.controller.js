@@ -27,7 +27,7 @@ export async function insertNewComment(req, res) {
     
         try {
             //  fuehre Model-Funktion zum Loeschen eines Kommentares anhand der ID aus
-            let response = await CommentModel.deleteComment(id)
+            let response = await CommentsModel.deleteComment(id)
             // sende erfolgreiche response zurueck
             res.send(response);
     
