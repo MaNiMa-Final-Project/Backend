@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+
 import authRouter from './src/routes/auth.route.js';
 import protectedRouter from './src/routes/protected.route.js';
 

@@ -56,3 +56,15 @@ export async function insertNewComment(commentBody) {
         }
     }
 }
+
+
+// DB-Funktion zum Aendern eines Kommentares anhand der ID
+export async function modifyComment(commentId, body) {
+    return await Comment.findByIdAndUpdate(commentId, body)
+}
+
+
+// DB-Funktion zum Loeschen eines Kommentares anhand der ID
+export async function deleteComment(commentId) {
+    return await Comment.deleteOne({_id:commentId})
+}
