@@ -7,6 +7,8 @@ import sendVerificationEmail from '../service/mailVerification.js';
 import * as UserModel from "../model/user.model.js";
 import { findById, findByName } from '../model/role.model.js';
 
+
+// Controller Funktion zum Anlegen neuer User
 export async function registerNewUser(req, res) {
     let body = req.body;
 
