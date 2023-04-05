@@ -1,25 +1,28 @@
 import { Router } from "express";
-import { registerNewUser, userLogin, userLogout } from "../controller/user.controller.js";
+import * as UserController from "../controller/user.controller.js";
+
 import verifyToken from "../service/jwt/jwt.verifyToken.js";
 
 // Erstelle neue Router Instanz
 const authRouter = Router();
 
-authRouter.route('/status')
-    .get(verifyToken, (req, res) => {
-        res.send({ success: true, message: 'Valid token' });
-    });
+authRouter.route('/validate-token')
+    .get(verifyToken, UserController.validateUser);
 
 // Routen Definition fuer /register
 authRouter.route('/register')
-    .post(registerNewUser)
+    .post(UserController.registerNewUser)
+
+authRouter.route('/register/email')
+    .post(UserController.validateEmail)
+
 
 // Routen Definition fuer /login
 authRouter.route('/login')
-    .post(userLogin)
+    .post(UserController.userLogin)
 
 // Routen Definition fuer /login
 authRouter.route('/logout')
-    .post(userLogout)
+    .get(UserController.userLogout)
 
 export default authRouter;

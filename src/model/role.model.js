@@ -48,8 +48,6 @@ export async function seedRoles() {
     await Promise.all([unverifiedRole.save(), userRole.save(), creatorRole.save(), adminRole.save()]);
 }
 
-
-
 //?-----BasicFunctions-----
 
 export async function getAll() {

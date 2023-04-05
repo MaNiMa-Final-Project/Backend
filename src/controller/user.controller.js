@@ -4,8 +4,11 @@ import md5 from "md5";
 import generateJsonWebToken from '../service/jwt/jwt.generateJsonWebToken.js';
 import sendVerificationEmail from '../service/mailVerification.js';
 
+import isValidMail from '../utils/isValidMail.js';
+
 import * as UserModel from "../model/user.model.js";
 import { findById, findByName } from '../model/role.model.js';
+import { validateAdmin, validateCreator } from '../utils/authorize.js';
 
 export async function registerNewUser(req, res) {
     let body = req.body;
@@ -56,12 +59,9 @@ export async function userLogin(req, res) {
     let {nameOrMail, password} = req.body;
 
     try {
-        // Suche User per Username -> Falls nicht gefunden per Mail
-        let user = await UserModel.findUserByUsername(nameOrMail);
-        if (!user) {
-            user = await UserModel.findUserByMail(nameOrMail);
-            if (!user) throw new Error("invalid username or password", {cause: 409}) 
-        }
+
+        let user = await UserModel.findUserByMailOrName(nameOrMail);
+        
         // Überprüfe, ob das Passwort korrekt ist
         const passwordMatches = bcrypt.compareSync(password, user.password);
 
@@ -95,7 +95,7 @@ export async function userLogin(req, res) {
             
             res.send({
                 success: true,
-                message: `User ${user.username} logged in successfully!`,
+                message: `User ${user.nickName} logged in successfully!`,
             })
 
         } else throw new Error("invalid username or password", {cause: 409}) 
@@ -107,12 +107,57 @@ export async function userLogin(req, res) {
     }
 }
 
-export async function userLogout(req, res) {
+export async function validateUser(req, res) {
+    const userId = req.tokenPayload.id
+    try {
+        let user = await UserModel.findUserById(userId);
+        
+        let isAdmin = await validateAdmin(user)
+        console.log("🚀 ~ file: user.controller.js:114 ~ validateUser ~ isAdmin:", isAdmin)
 
+        let isCreator = await validateCreator(user)
+        console.log("🚀 ~ file: user.controller.js:117 ~ validateUser ~ isCreator:", isCreator)
+
+        let response = {
+            user: user,
+            success: true,
+            isAdmin: isAdmin,
+            isCreator: isCreator
+        }
+
+
+        res.send(response)
+
+    } catch (error) {
+        if(!error.cause) res.status(400).send(error.message)
+        else res.status(error.cause).send(error.message)
+    }
+}
+
+export async function userLogout(req, res) {
     try {
         res.clearCookie('access_token');
         res.send({success: true, message: 'Logged out successfully'});
 
+    } catch (error) {
+        if(!error.cause) res.status(400).send(error.message)
+        else res.status(error.cause).send(error.message)
+    }
+}
+
+export async function validateEmail(req, res) {
+    let email = req.body.email
+
+    try {
+
+        let isValid = isValidMail(email)
+
+        if (isValid) {
+            let foundUser = await UserModel.verifyEmail(email);
+            if (foundUser) res.send({success: false, message: 'email already used'})
+            else res.send({success: true, message: 'email not in use'})
+        } else res.send({success: false, message: 'email not valid'})
+        
     } catch (error) {
         if(!error.cause) res.status(400).send(error.message)
         else res.status(error.cause).send(error.message)

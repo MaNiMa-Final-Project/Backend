@@ -9,7 +9,7 @@ const courseSchema = mongoose.Schema({
     start: { type: String, required: true},
     end: { type: String, required: true},
     description: {type: String, required: true},
-    comments: {type: String, required: true},
+    comments: [{type: mongoose.Types.ObjectId, ref: 'Comment'}],
     participants: [{type: mongoose.Types.ObjectId, ref: 'User'}]
 
 },{ timestamps: true });

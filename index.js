@@ -32,7 +32,6 @@ app.use('/auth', authRouter);
 
 app.use('/protected', protectedRouter);
 
-
 // Einmalig Verbindung ueber default Connection aufbauen
 // es kann noch ein Callback mitgeliefert werden
 await connectToDb(seedRoles);

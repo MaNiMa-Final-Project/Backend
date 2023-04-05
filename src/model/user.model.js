@@ -42,6 +42,17 @@ export async function findUserByMail(email) {
     return user;
 }
 
+export async function findUserByMailOrName(emailOrUsername) {
+    let user = await User.findOne({
+        $or: [
+            { email: emailOrUsername },
+            { nickName: emailOrUsername }
+        ]
+    });
+    if(!user) throw new Error(`User not found!`, {cause: 404});
+    return user;
+}
+
 //DB-Funktion zum Abrufen aller User
 export async function getAllUsers() {
     return await User.find();
@@ -86,4 +97,9 @@ export async function verifyUser(emailHash) {
 
     return await user.save(); // Speichert den Benutzer in der Datenbank und gibt das aktualisierte Benutzer-Objekt zurück
 }
+
+export async function verifyEmail(email) {
+    return await User.findOne({email: email});
+}
+
 
