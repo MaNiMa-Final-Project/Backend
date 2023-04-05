@@ -70,7 +70,7 @@ export async function getAll() {
     return await Course.find().populate('participants');
 }
 
-// DB-Funktion zum Aendern eines Kurs-Eintraegs anhand der ID
+// DB-Funktion zum Aendern eines Kurs-Eintrags anhand der ID
 export async function modifyCourse(courseId, body) {
     return await Course.findByIdAndUpdate(courseId, body)
 }

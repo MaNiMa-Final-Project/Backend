@@ -10,6 +10,8 @@ import * as UserModel from "../model/user.model.js";
 import { findById, findByName } from '../model/role.model.js';
 import { validateAdmin, validateCreator } from '../utils/authorize.js';
 
+
+// Controller Funktion zum Anlegen neuer User
 export async function registerNewUser(req, res) {
     let body = req.body;
 
@@ -134,10 +136,26 @@ export async function validateUser(req, res) {
     }
 }
 
-export async function userLogout(req, res) {
+export async function validateUser(req, res) {
+    const userId = req.tokenPayload.id
     try {
-        res.clearCookie('access_token');
-        res.send({success: true, message: 'Logged out successfully'});
+        let user = await UserModel.findUserById(userId);
+        
+        let isAdmin = await validateAdmin(user)
+        console.log("🚀 ~ file: user.controller.js:114 ~ validateUser ~ isAdmin:", isAdmin)
+
+        let isCreator = await validateCreator(user)
+        console.log("🚀 ~ file: user.controller.js:117 ~ validateUser ~ isCreator:", isCreator)
+
+        let response = {
+            user: user,
+            success: true,
+            isAdmin: isAdmin,
+            isCreator: isCreator
+        }
+
+
+        res.send(response)
 
     } catch (error) {
         if(!error.cause) res.status(400).send(error.message)
@@ -145,21 +163,41 @@ export async function userLogout(req, res) {
     }
 }
 
-export async function validateEmail(req, res) {
-    let email = req.body.email
-
+export async function validateUser(req, res) {
+    const userId = req.tokenPayload.id
     try {
-
-        let isValid = isValidMail(email)
-
-        if (isValid) {
-            let foundUser = await UserModel.verifyEmail(email);
-            if (foundUser) res.send({success: false, message: 'email already used'})
-            else res.send({success: true, message: 'email not in use'})
-        } else res.send({success: false, message: 'email not valid'})
+        let user = await UserModel.findUserById(userId);
         
+        let isAdmin = await validateAdmin(user)
+        console.log("🚀 ~ file: user.controller.js:114 ~ validateUser ~ isAdmin:", isAdmin)
+
+        let isCreator = await validateCreator(user)
+        console.log("🚀 ~ file: user.controller.js:117 ~ validateUser ~ isCreator:", isCreator)
+
+        let response = {
+            user: user,
+            success: true,
+            isAdmin: isAdmin,
+            isCreator: isCreator
+        }
+
+
+        res.send(response)
+
     } catch (error) {
         if(!error.cause) res.status(400).send(error.message)
         else res.status(error.cause).send(error.message)
+    }
+}
+
+export async function userLogout(req, res) {
+
+    try {
+        res.clearCookie('access_token'); // Lösche das Cookie "access token"
+        res.send({success: true, message: 'Logged out successfully'}); // Sende eine erfolgreiche Antwort mit einer Erfolgsmeldung
+
+    } catch (error) {
+        if(!error.cause) res.status(400).send(error.message) // Wenn der Fehler keine Ursache hat, sende eine Fehlerantwort mit dem Fehlercode "400" und der Fehlermeldung
+        else res.status(error.cause).send(error.message) // Andernfalls sende eine Fehlerantwort mit dem Fehlercode, der in der Ursache des Fehlers angegeben ist, und der Fehlermeldung
     }
 }
