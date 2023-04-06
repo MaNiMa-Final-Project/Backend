@@ -25,4 +25,6 @@ authRouter.route('/login')
 authRouter.route('/logout')
     .get(UserController.userLogout)
 
+    
+
 export default authRouter;
