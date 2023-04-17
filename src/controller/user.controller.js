@@ -4,8 +4,6 @@ import md5 from "md5";
 import generateJsonWebToken from '../service/jwt/jwt.generateJsonWebToken.js';
 import sendVerificationEmail from '../service/mailVerification.js';
 
-import isValidMail from '../utils/isValidMail.js';
-
 import * as UserModel from "../model/user.model.js";
 import { findById, findByName } from '../model/role.model.js';
 import { validateAdmin, validateCreator } from '../utils/authorize.js';
@@ -57,138 +55,116 @@ export async function registerNewUser(req, res) {
     }
 }
 
+// Diese Funktion validiert die Anmeldedaten des Benutzers und gibt ein JWT-Token zurück, um den Benutzer zu authentifizieren
 export async function userLogin(req, res) {
-    let {nameOrMail, password} = req.body;
+  // hole Benutzeranmeldedaten aus der Anfrage
+  let {nameOrMail, password} = req.body;
 
-    try {
+  try {
+    // finde den Benutzer anhand seines Namens oder seiner E-Mail-Adresse in der Datenbank
+    let user = await UserModel.findUserByMailOrName(nameOrMail);
+    
+    // Überprüfe, ob das Passwort korrekt ist
+    const passwordMatches = bcrypt.compareSync(password, user.password);
 
-        let user = await UserModel.findUserByMailOrName(nameOrMail);
+    if (passwordMatches) {
+
+      // Suche Rolle des Nutzers anhand der ID
+      const userRole = await findById(user.role);
+
+      // Dauer für das Token festlegen basierend auf der Umgebungsvariablen
+      const minute = 60 * 1000;
+      const hour = 60 * minute;
+      const duration = hour * process.env.JWT_AND_COOKIE_DURATION_HOURS_LOGIN;
+
+      // Payload mit den Nutzerdaten für das Token
+      let payload = {
+          id: user._id,
+          name: user.nickName,
+          role: userRole.name
+      }
+
+      // Erstelle Token mit den Nutzerdaten
+      const token = generateJsonWebToken(payload, duration);
+
+      // Konfiguration für das Cookie
+      let options = {
+          httpOnly: true,
+          expires: new Date(Date.now() + duration)
+      }
+
+      // Setze Cookie mit Token
+      res.cookie('access_token', `Bearer ${token}`, options)
         
-        // Überprüfe, ob das Passwort korrekt ist
-        const passwordMatches = bcrypt.compareSync(password, user.password);
+      // sende eine Bestätigungsantwort zurück an den Client inklusive Nutzer-Nachricht
+      res.send({
+          success: true,
+          message: `User ${user.nickName} logged in successfully!`,
+      })
 
-        if (passwordMatches) {
+    } else throw new Error("invalid username or password", {cause: 409}) 
 
-            // Suche Rolle des Nutzers anhand der ID
-            const userRole = await findById(user.role);
-
-            const minute = 60 * 1000;
-            const hour = 60 * minute;
-            const duration = hour * process.env.JWT_AND_COOKIE_DURATION_HOURS_LOGIN;
-
-            // Payload mit den Nutzerdaten für das Token
-            let payload = {
-                id: user._id,
-                name: user.nickName,
-                role: userRole.name
-            }
-
-            // Erstelle Token mit den Nutzerdaten
-            const token = generateJsonWebToken(payload, duration);
-
-            // Konfiguration für das Cookie
-            let options = {
-                httpOnly: true,
-                expires: new Date(Date.now() + duration)
-            }
-
-            // Setze Cookie mit Token
-            res.cookie('access_token', `Bearer ${token}`, options)
-            
-            res.send({
-                success: true,
-                message: `User ${user.nickName} logged in successfully!`,
-            })
-
-        } else throw new Error("invalid username or password", {cause: 409}) 
-
-    } catch (error) {
-        // Fehlerbehandlung
-        if(!error.cause) res.status(400).send(error.message)
-        else res.status(error.cause).send(error.message)
-    }
+  } catch (error) {
+    // wenn ein Fehler auftritt, sende eine Fehlermeldung an den Client
+    if(!error.cause) res.status(400).send(error.message)
+    else res.status(error.cause).send(error.message)
+  }
 }
 
+// Diese Funktion validiert das Benutzer-Token und gibt Informationen über den Benutzer zurück
 export async function validateUser(req, res) {
-    const userId = req.tokenPayload.id
+  // extrahiere die Benutzer-ID aus dem Token in der Anfrage
+  const userId = req.tokenPayload.id
+  try {
+    // finde den Benutzer anhand der ID in der Datenbank
+    let user = await UserModel.findUserById(userId);
+
+    // validiere, ob der Benutzer ein Administrator ist
+    let isAdmin = await validateAdmin(user)
+
+    // validiere, ob der Benutzer ein Creator ist
+    let isCreator = await validateCreator(user)
+
+    // erstelle die Antwort-JSON mit den Benutzerinformationen und Bestätigungswerten für Admin und Creator
+    let response = {
+      user: user,
+      success: true,
+      isAdmin: isAdmin,
+      isCreator: isCreator
+    }
+
+    // sende die Antwort zurück an den Client
+    res.send(response);
+
+  } catch (error) {
+    // wenn ein Fehler auftritt, sende eine Fehlermeldung an den Client
+    if(!error.cause) res.status(400).send(error.message)
+    else res.status(error.cause).send(error.message)
+  }
+}
+
+// Diese Funktion prüft, ob sie bereits in der Datenbank existiert.
+export async function validateUserEmail(req, res) {
+    let email = req.body.email; // Die E-Mail-Adresse wird aus dem Body des Requests entnommen.
+
     try {
-        let user = await UserModel.findUserById(userId);
-        
-        let isAdmin = await validateAdmin(user)
-        console.log("🚀 ~ file: user.controller.js:114 ~ validateUser ~ isAdmin:", isAdmin)
 
-        let isCreator = await validateCreator(user)
-        console.log("🚀 ~ file: user.controller.js:117 ~ validateUser ~ isCreator:", isCreator)
-
-        let response = {
-            user: user,
-            success: true,
-            isAdmin: isAdmin,
-            isCreator: isCreator
+        let foundUser = await UserModel.verifyEmail(email); // wird in der Datenbank nach einem Benutzer mit dieser E-Mail-Adresse gesucht.
+        if (foundUser) { // Wenn ein Benutzer gefunden wurde,
+            res.send({success: false, message:'email in use'}); // wird eine Fehlermeldung zurückgegeben.
+        } else {
+            res.send({success: true, message: 'valid email'}); // Andernfalls wird bestätigt, dass die E-Mail-Adresse gültig ist.
         }
 
-
-        res.send(response)
-
-    } catch (error) {
-        if(!error.cause) res.status(400).send(error.message)
-        else res.status(error.cause).send(error.message)
-    }
-}
-
-export async function validateUser(req, res) {
-    const userId = req.tokenPayload.id
-    try {
-        let user = await UserModel.findUserById(userId);
-        
-        let isAdmin = await validateAdmin(user)
-        console.log("🚀 ~ file: user.controller.js:114 ~ validateUser ~ isAdmin:", isAdmin)
-
-        let isCreator = await validateCreator(user)
-        console.log("🚀 ~ file: user.controller.js:117 ~ validateUser ~ isCreator:", isCreator)
-
-        let response = {
-            user: user,
-            success: true,
-            isAdmin: isAdmin,
-            isCreator: isCreator
+    } catch (error) { // Wenn ein Fehler auftritt,
+        if(!error.cause) {
+            res.status(400).send(error.message); // Bei einem Client-seitigen Fehler wird eine 400-Fehlermeldung zurückgegeben.
+        } else {
+            res.status(error.cause).send(error.message); // Sonst wird eine passende Fehlermeldung zurückgegeben.
         }
-
-
-        res.send(response)
-
-    } catch (error) {
-        if(!error.cause) res.status(400).send(error.message)
-        else res.status(error.cause).send(error.message)
     }
 }
 
-export async function validateUser(req, res) {
-    const userId = req.tokenPayload.id
-    try {
-        let user = await UserModel.findUserById(userId);
-        
-        let isAdmin = await validateAdmin(user)
-        console.log("🚀 ~ file: user.controller.js:114 ~ validateUser ~ isAdmin:", isAdmin)
-
-        let isCreator = await validateCreator(user)
-        console.log("🚀 ~ file: user.controller.js:117 ~ validateUser ~ isCreator:", isCreator)
-
-        let response = {
-            user: user,
-            success: true,
-            isAdmin: isAdmin,
-            isCreator: isCreator
-        }
-
-
-        res.send(response)
-
-    } catch (error) {
-        if(!error.cause) res.status(400).send(error.message)
-        else res.status(error.cause).send(error.message)
-    }
-}
 
 export async function userLogout(req, res) {
 

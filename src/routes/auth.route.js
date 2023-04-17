@@ -14,8 +14,7 @@ authRouter.route('/register')
     .post(UserController.registerNewUser)
 
 authRouter.route('/register/email')
-    .post(UserController.validateEmail)
-
+    .post(UserController.validateUserEmail)
 
 // Routen Definition fuer /login
 authRouter.route('/login')
