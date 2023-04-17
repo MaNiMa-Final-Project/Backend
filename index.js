@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 
 import authRouter from './src/routes/auth.route.js';
 import protectedRouter from './src/routes/protected.route.js';
+import courseRouter from './src/routes/course.route.js';
 
 import { connectToDb } from './src/service/db.service.js';
 import { seedRoles } from './src/model/role.model.js';
@@ -30,6 +31,8 @@ app.use(cors({
 // --------------------- ROUTES -------------------------
 
 app.use('/auth', authRouter);
+
+app.use('/course', courseRouter);
 
 app.use('/protected', protectedRouter);
 
