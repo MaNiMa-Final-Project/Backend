@@ -24,7 +24,7 @@ app.use(cookieParser());
 
 // Middleware fuer CROSS-ORIGIN-REQUEST
 app.use(cors({
-    origin: 'http://localhost:5174',
+    origin: 'http://localhost:5000',
     credentials: true
 }));
 

@@ -42,7 +42,6 @@ export async function getMultipleCourses(req, res) {
       
     try {
         const response = await CourseModel.getSeveralCourses(ids);
-        console.log("🚀 ~ file: course.controller.js:45 ~ getMultipleCourses ~ response:", response)
         res.send(response)
     } catch (error) {
         //  Wenn kein Grund für den Fehler angegeben ist, wird eine Fehlermeldung 
@@ -58,7 +57,6 @@ export async function createCourse(req, res) {
 
     try {
         const response = await CourseModel.insertNewCourse(newCourse);
-        console.log("🚀 ~ file: course.controller.js:61 ~ createCourse ~ response:", response)
         res.send(response)
     } catch (error) {
         //  Wenn kein Grund für den Fehler angegeben ist, wird eine Fehlermeldung 
