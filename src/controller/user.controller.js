@@ -19,6 +19,9 @@ export async function registerNewUser(req, res) {
     body.verificationHash = verificationToken;
     body.password = bcrypt.hashSync(body.password, 10);
 
+    console.log("🚀 ~ file: user.controller.js:15 ~ registerNewUser ~ body:", body)
+
+
     try {
         let user = await UserModel.insertNewUser(body);
         let userRole = await findByName('unverified');

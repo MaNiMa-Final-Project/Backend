@@ -67,6 +67,7 @@ export async function insertNewUser(userBody) {
         const role = await RoleModel.findByName(RoleModel.rolesEnum.unverified); // Findet die "unverified"-Rolle
 
         userBody.role = role._id; // Setzt die Rolle des neuen Benutzers auf die "unverified"-Rolle
+        console.log("🚀 ~ file: user.model.js:70 ~ insertNewUser ~ userBody:", userBody)
 
         const newUser = new User(userBody); // Erstellt ein neues "User"-Objekt mit den angegebenen Benutzerdaten
 

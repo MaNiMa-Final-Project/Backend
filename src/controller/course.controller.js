@@ -23,8 +23,6 @@ export async function registerNewCourse(req, res) {
 
 
 export async function getAllCourses(req, res) {
-    
-    console.log('hallo');
     try {
         // fuehre Model-Funktion zum Erhalten aller Kurse aus
         let response = await CourseModel.getAll();
