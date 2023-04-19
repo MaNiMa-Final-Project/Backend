@@ -15,7 +15,8 @@ export async function connectToDb(callback) {
         // Setze den 'strict' Mode fuer mongoose (Felder, die nicht im Schema enthalten sind, werden nicht mitgespeichert)
         mongoose.set('strictQuery', true);
 
-        await mongoose.connect(`mongodb://${process.env.DB_HOST}/${process.env.DB_NAME}`, {
+        
+        await mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PW}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`, {
             maxPoolSize: 10
         });
 
