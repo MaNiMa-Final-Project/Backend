@@ -1,5 +1,7 @@
 import { Router } from "express";
 import * as UserController from "../controller/user.controller.js";
+import * as CourseController from "../controller/course.controller.js";
+
 
 import verifyToken from "../service/jwt/jwt.verifyToken.js";
 
@@ -23,6 +25,10 @@ authRouter.route('/login')
 // Routen Definition fuer /login
 authRouter.route('/logout')
     .get(UserController.userLogout)
+
+    // Routen Definition fuer /register
+authRouter.route('/all')
+    .get(CourseController.getAllCourses)
 
     
 

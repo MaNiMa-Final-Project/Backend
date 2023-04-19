@@ -37,13 +37,45 @@ export async function getAllCourses(req, res) {
     }
 }
 
+export async function getMultipleCourses(req, res) {
+    const ids = req.body.ids; // [ '5f6a4cd331f7869e056a996d', '5f6a4eb9352f7d628b1c60d7' ]
+      
+    try {
+        const response = await CourseModel.getSeveralCourses(ids);
+        console.log("🚀 ~ file: course.controller.js:45 ~ getMultipleCourses ~ response:", response)
+        res.send(response)
+    } catch (error) {
+        //  Wenn kein Grund für den Fehler angegeben ist, wird eine Fehlermeldung 
+        // mit dem HTTP-Statuscode 400 (Bad Request) an den Client zurückgesendet
+        if(!error.cause) res.status(400).send(error.message)
+        else res.status(error.cause).send(error.message)
+    }
+    
+}
+
+export async function createCourse(req, res) {
+    let newCourse = req.body
+
+    try {
+        const response = await CourseModel.insertNewCourse(newCourse);
+        console.log("🚀 ~ file: course.controller.js:61 ~ createCourse ~ response:", response)
+        res.send(response)
+    } catch (error) {
+        //  Wenn kein Grund für den Fehler angegeben ist, wird eine Fehlermeldung 
+        // mit dem HTTP-Statuscode 400 (Bad Request) an den Client zurückgesendet
+        if(!error.cause) res.status(400).send(error.message)
+        else res.status(error.cause).send(error.message)
+    }
+}
+
 
 export async function getCourseById(req, res) {
     // extrahiere Kurs-ID
     let courseId = req.params.id
+
     try {
         //  fuehre Model-Funktion zum Erhalten eines Kurses anhand der ID aus
-        let response = await CourseModel.findCourseId(courseId);
+        let response = await CourseModel.findRawCourseById(courseId);
         // sende erfolgreiche response zurueck
         res.send(response)
         

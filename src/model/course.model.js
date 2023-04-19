@@ -10,7 +10,8 @@ const courseSchema = mongoose.Schema({
     end: { type: String, required: true},
     description: {type: String, required: true},
     comments: [{type: mongoose.Types.ObjectId, ref: 'Comment'}],
-    participants: [{type: mongoose.Types.ObjectId, ref: 'User'}]
+    participants: [{type: mongoose.Types.ObjectId, ref: 'User'}],
+    price: {type: Number}
 
 },{ timestamps: true });
     
@@ -37,10 +38,25 @@ export async function findRawCourseById(courseId) {
 
 // DB-Funktion zum Erstellen eines neuen Kurs-Eintrags
 export async function insertNewCourse(courseBody) {
+
+    /* //todo
+        Ist der User, der den Course erstellt ein Creator 
+        sollte automatisch der Ersteller auch der Creator sein
+
+        Ist der User allerdings ein Autor, der eine Course für einen Creator erstellt
+        sollte ein Feld mit möglichen Creator zur Auswahl stehen
+
+        Momentan wird ein Default creator genutzt. Egal was im Creator input feld steht. 
+        Der Inhalt wird überschrieben
+    */
+
+    courseBody.creator = '642684173bb9c185a26288d4';
     try {
+
+
+
         // Erstelle neue Instanz des Event Models
         const newCourse = new Course(courseBody);
-
         // Speichere neue Instanz
         return await newCourse.save();
 
@@ -67,7 +83,11 @@ export async function insertNewCourse(courseBody) {
 
 // DB-Funktion zum Abrufen aller Kurs-Eintraege
 export async function getAll() {
-    return await Course.find().populate('participants');
+    return await Course.find({});
+}
+
+export async function getSeveralCourses(ids) {
+    return await Course.find({'_id': { $in: ids }}); // Suche alle Objekte mit den übergebenen IDs
 }
 
 // DB-Funktion zum Aendern eines Kurs-Eintrags anhand der ID
@@ -79,7 +99,6 @@ export async function modifyCourse(courseId, body) {
 export async function deleteCourse(courseId) {
     return await Course.deleteOne({_id:courseId})
 }
-
 
 export async function attendToCourseById(courseId, userId){
 
