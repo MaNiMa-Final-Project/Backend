@@ -10,6 +10,9 @@ import courseRouter from './src/routes/course.route.js';
 import { connectToDb } from './src/service/db.service.js';
 import { seedRoles } from './src/model/role.model.js';
 import cookieParser from 'cookie-parser';
+
+
+
 //import { startMailService } from './src/service/mailVerification.js';
 
 // Lade Umgebungsvariablen  aus der .env Datei
