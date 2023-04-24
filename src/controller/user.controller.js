@@ -9,6 +9,24 @@ import { findById, findByName } from '../model/role.model.js';
 import { validateAdmin, validateCreator } from '../utils/authorize.js';
 
 
+export async function getUserById(req, res) {
+    // extrahiere die Benutzer-ID aus dem Token in der Anfrage
+    const userId = req.tokenPayload.id
+
+    try {
+        // finde den Benutzer anhand der ID in der Datenbank
+        let user = await UserModel.findDetailedUserInformationById(userId);
+        // sende die Antwort zurück an den Client
+        res.send(user);
+    
+      } catch (error) {
+        // wenn ein Fehler auftritt, sende eine Fehlermeldung an den Client
+        if(!error.cause) res.status(400).send(error.message)
+        else res.status(error.cause).send(error.message)
+      }
+
+}
+
 // Controller Funktion zum Anlegen neuer User
 export async function registerNewUser(req, res) {
     let body = req.body;

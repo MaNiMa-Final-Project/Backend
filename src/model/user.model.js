@@ -60,6 +60,35 @@ export async function getAllUsers() {
 
 //?-----AdvancedFunctions-----
 
+export async function findDetailedUserInformationById(userId) {
+    let user = await User.findOne({_id: userId})
+        .select('-verificationHash')
+        .populate({
+            path: 'attendedCourses',
+            model: 'Course'
+          })
+          .populate({
+            path: 'upcomingCourses',
+            model: 'Course'
+          })
+          .populate({
+            path: 'notedCourses',
+            model: 'Course'
+          })
+          .populate({
+            path: 'role',
+            model: 'Role'
+          })
+          .exec();
+
+    if (!user) {
+      throw new Error(`User with ${userId} not found!`, {cause: 404});
+    }
+  
+    return user;
+  }
+  
+
 // DB-Funktion zum Erstellen eines neuen User-Eintrags
 export async function insertNewUser(userBody) {
     try {
