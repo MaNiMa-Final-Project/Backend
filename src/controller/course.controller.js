@@ -1,12 +1,15 @@
 import * as CourseModel from "../model/course.model.js";
+import * as imageService from "../service/cloudinary.service.js";
 
 
-
+//TODO kann weg?!
 export async function registerNewCourse(req, res) {
 // extrahiere den body des req-objektes   
     let body = req.body;
 
     try {
+
+        console.log(body.image);
         // Fuehre Model-Funktion zum Einfuegen eines neuen Kurses aus
         let response = await CourseModel.insertNewCourse(body);
 
@@ -54,8 +57,9 @@ export async function getMultipleCourses(req, res) {
 
 export async function createCourse(req, res) {
     let newCourse = req.body
-
     try {
+        const imgURl = await imageService.upload(newCourse.image,"courses", newCourse.title);
+        newCourse.image = imgURl;
         const response = await CourseModel.insertNewCourse(newCourse);
         res.send(response)
     } catch (error) {

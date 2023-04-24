@@ -11,6 +11,8 @@ import { connectToDb } from './src/service/db.service.js';
 import { seedRoles } from './src/model/role.model.js';
 import cookieParser from 'cookie-parser';
 
+import * as imageService from './src/service/cloudinary.service.js';
+
 
 
 //import { startMailService } from './src/service/mailVerification.js';
@@ -18,11 +20,14 @@ import cookieParser from 'cookie-parser';
 // Lade Umgebungsvariablen  aus der .env Datei
 dotenv.config();
 
+
+imageService.init();
+
 // Initialisiere express
 const app = express();
 
 // Middleware fuer das body-Parsing
-app.use(express.json());
+app.use(express.json({limit:"50mb"}));
 app.use(cookieParser());
 
 // Middleware fuer CROSS-ORIGIN-REQUEST

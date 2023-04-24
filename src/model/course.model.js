@@ -4,7 +4,7 @@ const courseSchema = mongoose.Schema({
 
     title: {type: String, required: true, unique: true},
     creator: {type: mongoose.Types.ObjectId, ref: 'User'},
-    picture: {},
+    image: {type: String},
     beginning: { type: Date, required: true},
     duration: { type: Number, required: true},
     start: { type: String, required: true},
