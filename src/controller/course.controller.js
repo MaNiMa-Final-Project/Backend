@@ -42,10 +42,19 @@ export async function getAllCourses(req, res) {
 
 export async function getMultipleCourses(req, res) {
     const ids = req.body.ids; // [ '5f6a4cd331f7869e056a996d', '5f6a4eb9352f7d628b1c60d7' ]
+
+    const query = req.query.q;
+
       
     try {
-        const response = await CourseModel.getSeveralCourses(ids);
-        res.send(response)
+        if (ids) {
+            const response = await CourseModel.getSeveralCourses(ids);
+            res.send(response)
+        }
+        if (query) {
+            const response = await CourseModel.getCoursesByQuery(query);
+            res.send(response)
+        }
     } catch (error) {
         //  Wenn kein Grund für den Fehler angegeben ist, wird eine Fehlermeldung 
         // mit dem HTTP-Statuscode 400 (Bad Request) an den Client zurückgesendet
