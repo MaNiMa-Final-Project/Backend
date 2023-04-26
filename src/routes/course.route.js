@@ -13,6 +13,6 @@ courseRouter.route('/:id')
     .get(CourseController.getCourseById);
 
 
-
+    
 export default courseRouter;
 
