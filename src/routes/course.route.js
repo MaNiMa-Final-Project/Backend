@@ -12,7 +12,8 @@ courseRouter.route('/')
     .get(CourseController.getMultipleCourses)
 
 courseRouter.route('/:id')
-    .get(CourseController.getCourseById);
+    .get(CourseController.getCourseById)
+    .delete(CourseController.deleteCourseById)
 
 
     

@@ -102,7 +102,7 @@ export async function modifyCourse(courseId, body) {
 
 // DB-Funktion zum Loeschen eines Kurses anhand der ID
 export async function deleteCourse(courseId) {
-    return await Course.deleteOne({_id:courseId})
+    return await Course.findOneAndDelete({_id:courseId})
 }
 
 export async function attendToCourseById(courseId, userId){

@@ -2,28 +2,6 @@ import * as CourseModel from "../model/course.model.js";
 import * as imageService from "../service/cloudinary.service.js";
 
 
-//TODO kann weg?!
-export async function registerNewCourse(req, res) {
-// extrahiere den body des req-objektes   
-    let body = req.body;
-
-    try {
-
-        console.log(body.image);
-        // Fuehre Model-Funktion zum Einfuegen eines neuen Kurses aus
-        let response = await CourseModel.insertNewCourse(body);
-
-        // sende erfolgreiche response zurueck
-        res.send(response)
-        
-    } catch (error) {
-        //  Wenn kein Grund für den Fehler angegeben ist, wird eine Fehlermeldung 
-        // mit dem HTTP-Statuscode 400 (Bad Request) an den Client zurückgesendet
-        if(!error.cause) res.status(400).send(error.message)
-        else res.status(error.cause).send(error.message)
-    }
-}
-
 
 export async function getAllCourses(req, res) {
     try {
@@ -106,7 +84,12 @@ export async function deleteCourseById(req, res) {
     try {
         //  fuehre Model-Funktion zum Loeschen eines Kurses anhand der ID aus
         let response = await CourseModel.deleteCourse(id)
-        // sende erfolgreiche response zurueck
+
+        
+        //loesche zugehoeriges Bild aus der Cloud
+        imageService.remove(response.image);
+
+        // sende erfolgreiche response zurueck       
         res.send(response);
 
     } catch (error) {
