@@ -28,6 +28,11 @@ export async function findUserByUsername(nickName) {
     if(!user) throw new Error(`User with ${nickName} not found!`, {cause: 404});
     return user;
 }
+
+export async function getUserByQuery(query) {
+    return await User.find({ nickName: { $regex: query, $options: 'i' } }).populate('role');
+}
+
 //DB-Funktion zum Abrufen eines bestimmten User-Eintrags per ID
 export async function findUserById(userId) {
     let user = await User.findOne({_id: userId});
@@ -87,6 +92,13 @@ export async function findDetailedUserInformationById(userId) {
   
     return user;
   }
+
+export async function changeUserRole(userId, newRole) {
+    return await User.updateOne(
+        {_id: userId},
+        { $set: { role: newRole } }
+    );
+}
   
 
 // DB-Funktion zum Erstellen eines neuen User-Eintrags

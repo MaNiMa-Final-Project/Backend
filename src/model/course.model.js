@@ -92,7 +92,7 @@ export async function getSeveralCourses(ids) {
 }
 
 export async function getCoursesByQuery(query) {
-    return await Course.find({ title: { $regex: query, $options: 'i' } });
+    return await Course.find({ title: { $regex: query, $options: 'i' } }).populate('creator');
 }
 
 // DB-Funktion zum Aendern eines Kurs-Eintrags anhand der ID
