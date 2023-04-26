@@ -91,6 +91,10 @@ export async function getSeveralCourses(ids) {
     return await Course.find({'_id': { $in: ids }}); // Suche alle Objekte mit den übergebenen IDs
 }
 
+export async function getCoursesByQuery(query) {
+    return await Course.find({ title: { $regex: query, $options: 'i' } });
+}
+
 // DB-Funktion zum Aendern eines Kurs-Eintrags anhand der ID
 export async function modifyCourse(courseId, body) {
     return await Course.findByIdAndUpdate(courseId, body)
