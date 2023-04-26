@@ -19,6 +19,12 @@ protectedRouter.route('/createcourse')
 protectedRouter.route('/user')
     .get(verifyToken, UserController.getUserById)
 
+protectedRouter.route('/users')
+    .get(verifyToken, UserController.getUserByQuery)
+
+protectedRouter.route('/role')
+    .get(verifyToken, UserController.changeUserRole)
+
 
 
 export default protectedRouter;

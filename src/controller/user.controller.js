@@ -27,6 +27,44 @@ export async function getUserById(req, res) {
 
 }
 
+export async function getUserByQuery(req, res) {
+    const query = req.query.q
+
+    try {
+        // finde den Benutzer anhand der ID in der Datenbank
+        let user = await UserModel.getUserByQuery(query);
+        // sende die Antwort zurück an den Client
+        res.send(user);
+    
+      } catch (error) {
+        // wenn ein Fehler auftritt, sende eine Fehlermeldung an den Client
+        if(!error.cause) res.status(400).send(error.message)
+        else res.status(error.cause).send(error.message)
+      }
+
+}
+
+
+
+export async function changeUserRole(req, res) {
+    const userId = req.query.u
+    const newRole = req.query.r
+
+
+    try {
+        // finde den Benutzer anhand der ID in der Datenbank
+        let user = await UserModel.changeUserRole(userId, newRole);
+        // sende die Antwort zurück an den Client
+        res.send(user);
+    
+      } catch (error) {
+        // wenn ein Fehler auftritt, sende eine Fehlermeldung an den Client
+        if(!error.cause) res.status(400).send(error.message)
+        else res.status(error.cause).send(error.message)
+      }
+
+}
+
 // Controller Funktion zum Anlegen neuer User
 export async function registerNewUser(req, res) {
     let body = req.body;
