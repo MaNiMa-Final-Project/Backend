@@ -3,16 +3,19 @@ import mongoose from "mongoose";
 const courseSchema = mongoose.Schema({
 
     title: {type: String, required: true, unique: true},
+    description: {type: String, required: true},
+    shortDescription: {type: String},
     creator: {type: mongoose.Types.ObjectId, ref: 'User'},
-    image: {type: String},
     beginning: { type: Date, required: true},
     duration: { type: Number, required: true},
     start: { type: String, required: true},
     end: { type: String, required: true},
-    description: {type: String, required: true},
+    maxParticipants: { type: Number },
     comments: [{type: mongoose.Types.ObjectId, ref: 'Comment'}],
     participants: [{type: mongoose.Types.ObjectId, ref: 'User'}],
-    price: {type: Number}
+    price: {type: Number},
+    image: {type: String},
+
 
 },{ timestamps: true });
     

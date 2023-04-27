@@ -10,9 +10,12 @@ const userSchema = mongoose.Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
+    notes: { type: String },
+    image: { type: String },
     verificationHash: { type: String },
     attendedCourses: [{type: mongoose.Types.ObjectId, ref: 'Courses'}],
     upcomingCourses: [{type: mongoose.Types.ObjectId, ref: 'Courses'}],
+    comments: [{type: mongoose.Types.ObjectId, ref: 'Comments'}],
     notedCourses: [{type: mongoose.Types.ObjectId, ref: 'Courses'}],
 
     
@@ -31,6 +34,10 @@ export async function findUserByUsername(nickName) {
 
 export async function getUserByQuery(query) {
     return await User.find({ nickName: { $regex: query, $options: 'i' } }).populate('role');
+}
+
+export async function getAllCreators() {
+    return await User.find({ role: '6405ac7d6b2564cd76c42604' });
 }
 
 //DB-Funktion zum Abrufen eines bestimmten User-Eintrags per ID
