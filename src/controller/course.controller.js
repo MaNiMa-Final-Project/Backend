@@ -45,10 +45,16 @@ export async function getMultipleCourses(req, res) {
 export async function createCourse(req, res) {
     let newCourse = req.body
     try {
+
         const imgURl = await imageService.upload(newCourse.image,"courses", newCourse.title);
         newCourse.image = imgURl;
-        const response = await CourseModel.insertNewCourse(newCourse);
-        res.send(response)
+        console.log("🚀 ~ file: course.controller.js:73 ~ newCourse.image:", newCourse.image)
+
+
+        // const response = await CourseModel.insertNewCourse(newCourse);
+
+        res.send("response");
+        
     } catch (error) {
         //  Wenn kein Grund für den Fehler angegeben ist, wird eine Fehlermeldung 
         // mit dem HTTP-Statuscode 400 (Bad Request) an den Client zurückgesendet

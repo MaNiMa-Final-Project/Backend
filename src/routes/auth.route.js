@@ -30,6 +30,9 @@ authRouter.route('/logout')
 authRouter.route('/all')
     .get(CourseController.getAllCourses)
 
+authRouter.route('/dozenten')
+    .get(UserController.getAllCreators)
+
     
 
 export default authRouter;

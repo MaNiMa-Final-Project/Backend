@@ -4,6 +4,9 @@ import md5 from "md5";
 import generateJsonWebToken from '../service/jwt/jwt.generateJsonWebToken.js';
 import sendVerificationEmail from '../service/mailVerification.js';
 
+import * as imageService from "../service/cloudinary.service.js";
+
+
 import * as UserModel from "../model/user.model.js";
 import { findById, findByName } from '../model/role.model.js';
 import { validateAdmin, validateCreator } from '../utils/authorize.js';
@@ -44,7 +47,19 @@ export async function getUserByQuery(req, res) {
 
 }
 
+export async function getAllCreators(req, res) {
+  try {
+    // finde den Benutzer anhand der ID in der Datenbank
+    let users = await UserModel.getAllCreators();
+    // sende die Antwort zurück an den Client
+    res.send(users);
 
+  } catch (error) {
+    // wenn ein Fehler auftritt, sende eine Fehlermeldung an den Client
+    if(!error.cause) res.status(400).send(error.message)
+    else res.status(error.cause).send(error.message)
+  }
+}
 
 export async function changeUserRole(req, res) {
     const userId = req.query.u
@@ -67,19 +82,24 @@ export async function changeUserRole(req, res) {
 
 // Controller Funktion zum Anlegen neuer User
 export async function registerNewUser(req, res) {
-    let body = req.body;
+    let newUser = req.body;
 
     const salt = await bcrypt.genSalt(10);
     const verificationToken = md5(salt);
 
-    body.verificationHash = verificationToken;
-    body.password = bcrypt.hashSync(body.password, 10);
+    newUser.verificationHash = verificationToken;
+    newUser.password = bcrypt.hashSync(newUser.password, 10);
 
-    console.log("🚀 ~ file: user.controller.js:15 ~ registerNewUser ~ body:", body)
+    const imgURl = await imageService.upload(newUser.image,"users", newUser.nickName);
+    newUser.image = imgURl;
+
+    console.log("🚀 ~ file: user.controller.js:15 ~ registerNewUser ~ body:", newUser)
+
+
 
 
     try {
-        let user = await UserModel.insertNewUser(body);
+        let user = await UserModel.insertNewUser(newUser);
         let userRole = await findByName('unverified');
 
         const minute = 60 * 1000;

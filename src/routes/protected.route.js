@@ -7,6 +7,16 @@ import isAdminOrCreator from "../service/authorization/isAdminOrCreator.js";
 import * as CourseController from "../controller/course.controller.js";
 import * as UserController from "../controller/user.controller.js";
 
+import { validationResult } from 'express-validator';
+import { validationMiddleware } from '../service/validation/courseSchema.js';
+
+function myRouteHandler(req, res, next) {  
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+}
 
 
 
@@ -14,7 +24,7 @@ import * as UserController from "../controller/user.controller.js";
 const protectedRouter = Router();
 
 protectedRouter.route('/createcourse')
-    .post(verifyToken, isAdminOrCreator, CourseController.createCourse)
+    .post([verifyToken, isAdminOrCreator, validationMiddleware, myRouteHandler], CourseController.createCourse)
 
 protectedRouter.route('/user')
     .get(verifyToken, UserController.getUserById)
