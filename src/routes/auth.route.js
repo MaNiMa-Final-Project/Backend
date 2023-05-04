@@ -1,6 +1,8 @@
 import { Router } from "express";
 import * as UserController from "../controller/user.controller.js";
 import * as CourseController from "../controller/course.controller.js";
+import * as imageService from "../service/cloudinary.service.js";
+
 
 
 import verifyToken from "../service/jwt/jwt.verifyToken.js";
@@ -32,6 +34,17 @@ authRouter.route('/all')
 
 authRouter.route('/dozenten')
     .get(UserController.getAllCreators)
+
+authRouter.route('/upload')
+    .post(async (req, res) => {
+        const { image, id } = req.body; // Extrahieren von Bild und Benutzernamen aus dem Request-Body
+      
+        // Hochladen des Bildes mit dem Image-Dienst
+        const imgUrl = await imageService.upload(image, 'users', id);
+      
+        // Zurückgeben der hochgeladenen Bild-URL
+        res.status(200).json({ url: imgUrl });
+      })
 
     
 

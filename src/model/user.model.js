@@ -12,6 +12,7 @@ const userSchema = mongoose.Schema({
     role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
     notes: { type: String },
     image: { type: String },
+    croppedImage: { type: String },
     verificationHash: { type: String },
     attendedCourses: [{type: mongoose.Types.ObjectId, ref: 'Courses'}],
     upcomingCourses: [{type: mongoose.Types.ObjectId, ref: 'Courses'}],
@@ -126,6 +127,10 @@ export async function insertNewUser(userBody) {
             throw new Error('Username or Email already used', {cause: 409})
         } else throw new Error('unknown problem - todo', {cause: 400})
     }
+}
+
+export async function editUser(userId, data) {
+    return await User.findOneAndUpdate({_id: userId}, data, {new: true});
 }
 
 export async function verifyUser(emailHash) {

@@ -95,9 +95,6 @@ export async function registerNewUser(req, res) {
 
     console.log("🚀 ~ file: user.controller.js:15 ~ registerNewUser ~ body:", newUser)
 
-
-
-
     try {
         let user = await UserModel.insertNewUser(newUser);
         let userRole = await findByName('unverified');
@@ -189,6 +186,60 @@ export async function userLogin(req, res) {
     else res.status(error.cause).send(error.message)
   }
 }
+
+export async function editUser(req, res) {
+  const userId = req.tokenPayload.id;
+  const body = req.body;
+
+  try {
+
+    let user = await UserModel.editUser(userId, body);
+    res.send(user);
+    
+  } catch (error) {
+    // wenn ein Fehler auftritt, sende eine Fehlermeldung an den Client
+    if(!error.cause) res.status(400).send(error.message)
+    else res.status(error.cause).send(error.message)
+  }
+}
+
+export async function pwChange(req, res) {
+
+  let userId = req.tokenPayload.id;
+  let {newPass, oldPass} = req.body;
+
+  let user = await UserModel.findUserById(userId)
+
+  const passwordMatches = bcrypt.compareSync(oldPass, user.password);
+
+
+
+  if(passwordMatches) {
+    try {
+
+      let hashedPassword = bcrypt.hashSync(newPass, 10);
+
+
+     await UserModel.editUser(userId, {password: hashedPassword});
+
+  
+  
+      res.send({success: true});
+      
+    } catch (error) {
+      // wenn ein Fehler auftritt, sende eine Fehlermeldung an den Client
+      if(!error.cause) res.status(400).send(error.message)
+      else res.status(error.cause).send(error.message)
+    }
+  } else {
+    res.send({success: false})
+  }
+
+
+
+
+}
+
 
 // Diese Funktion validiert das Benutzer-Token und gibt Informationen über den Benutzer zurück
 export async function validateUser(req, res) {
