@@ -35,6 +35,12 @@ protectedRouter.route('/users')
 protectedRouter.route('/role')
     .get(verifyToken, UserController.changeUserRole)
 
+protectedRouter.route('/edituser')
+    .put(verifyToken, UserController.editUser)
+
+protectedRouter.route('/efoijgvaeipr')
+    .put(verifyToken, UserController.pwChange)
+
 
 
 export default protectedRouter;

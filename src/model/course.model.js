@@ -15,7 +15,7 @@ const courseSchema = mongoose.Schema({
     participants: [{type: mongoose.Types.ObjectId, ref: 'User'}],
     price: {type: Number},
     image: {type: String},
-
+    croppedImage: { type: String }
 
 },{ timestamps: true });
     
