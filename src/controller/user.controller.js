@@ -307,3 +307,49 @@ export async function userLogout(req, res) {
         else res.status(error.cause).send(error.message) // Andernfalls sende eine Fehlerantwort mit dem Fehlercode, der in der Ursache des Fehlers angegeben ist, und der Fehlermeldung
     }
 }
+
+export async function addCreator(req, res) {
+  let newUser = req.body;
+
+  const salt = await bcrypt.genSalt(10);
+  const verificationToken = md5(salt);
+
+  const imgURl = await imageService.upload(newUser.image,"users", newUser.nickName);
+  newUser.image = imgURl;
+
+  try {
+      let user = await UserModel.insertNewCreator(newUser);
+      let userRole = await findByName('creator');
+
+      const minute = 60 * 1000;
+      const hour = 60 * minute;
+      const duration = hour * process.env.JWT_AND_COOKIE_DURATION_HOURS_REGISTER;
+
+      let payload = {
+          id: user._id,
+          name: user.username,
+          role: userRole.name
+      }
+
+      const token = generateJsonWebToken(payload, duration);
+
+      //sendVerificationEmail(body.email, verificationToken)
+
+      let options = {
+          httpOnly: true,
+          expires: new Date(Date.now() + duration)
+      }
+
+      res
+      .cookie('access_token', `Bearer ${token}`, options)
+      .send({
+          success: true,
+          message: `"Registration successful - Please check your Mails "`,
+      })
+
+  } catch (error) {
+      if(!error.cause) res.status(400).send(error.message)
+      else res.status(error.cause).send(error.message)
+  }
+
+}
