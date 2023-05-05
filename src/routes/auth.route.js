@@ -10,6 +10,9 @@ import verifyToken from "../service/jwt/jwt.verifyToken.js";
 // Erstelle neue Router Instanz
 const authRouter = Router();
 
+
+
+
 authRouter.route('/validate-token')
     .get(verifyToken, UserController.validateUser);
 
