@@ -108,6 +108,24 @@ export async function changeUserRole(userId, newRole) {
     );
 }
   
+// DB-Funktion zum Erstellen eines neuen User-Eintrags
+export async function insertNewCreator(userBody) {
+    try {
+
+        const role = await RoleModel.findByName(RoleModel.rolesEnum.creator); // Findet die "unverified"-Rolle
+
+        userBody.role = role._id; // Setzt die Rolle des neuen Benutzers auf die "unverified"-Rolle
+
+        const newUser = new User(userBody); // Erstellt ein neues "User"-Objekt mit den angegebenen Benutzerdaten
+
+        return await newUser.save(); // Speichert den neuen Benutzer in der Datenbank und gibt das neue Benutzer-Objekt zurück
+
+    } catch (error) {
+        if ( (error.hasOwnProperty('code')) && (error.code === 11000) ) { // Wenn ein eindeutiger Indexverstoß aufgetreten ist, wirft die Funktion einen Fehler mit dem Statuscode 409 (Conflict)
+            throw new Error('Username or Email already used', {cause: 409})
+        } else throw new Error('unknown problem - todo', {cause: 400})
+    }
+}
 
 // DB-Funktion zum Erstellen eines neuen User-Eintrags
 export async function insertNewUser(userBody) {
@@ -116,7 +134,6 @@ export async function insertNewUser(userBody) {
         const role = await RoleModel.findByName(RoleModel.rolesEnum.unverified); // Findet die "unverified"-Rolle
 
         userBody.role = role._id; // Setzt die Rolle des neuen Benutzers auf die "unverified"-Rolle
-        console.log("🚀 ~ file: user.model.js:70 ~ insertNewUser ~ userBody:", userBody)
 
         const newUser = new User(userBody); // Erstellt ein neues "User"-Objekt mit den angegebenen Benutzerdaten
 
