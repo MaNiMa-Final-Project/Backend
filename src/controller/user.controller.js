@@ -115,6 +115,7 @@ export async function registerNewUser(req, res) {
 
         let options = {
             httpOnly: true,
+            sameSite: process.env.NODE_ENV ? 'lax' : 'none',
             expires: new Date(Date.now() + duration)
         }
 
@@ -166,6 +167,7 @@ export async function userLogin(req, res) {
       // Konfiguration für das Cookie
       let options = {
           httpOnly: true,
+          sameSite: process.env.NODE_ENV ? 'lax' : 'none',
           expires: new Date(Date.now() + duration)
       }
 
