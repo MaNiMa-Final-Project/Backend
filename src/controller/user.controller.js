@@ -167,9 +167,13 @@ export async function userLogin(req, res) {
       // Konfiguration für das Cookie
       let options = {
           httpOnly: true,
-          sameSite: process.env.NODE_ENV ? 'lax' : 'none',
+          sameSite: process.env.NODE_ENV ? 'None' : 'Lax',
+          secure: process.env.NODE_ENV ? true : false,
           expires: new Date(Date.now() + duration)
       }
+      console.log("🚀 ----------------------------------------------------🚀")
+      console.log("🚀 ~ file: user.controller.js:173 ~ options:", options)
+      console.log("🚀 ----------------------------------------------------🚀")
 
       // Setze Cookie mit Token
       res.cookie('access_token', `Bearer ${token}`, options)
