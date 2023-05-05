@@ -38,7 +38,7 @@ app.use(cors({
 
 app.route('/')
     .get((req, res) => {
-        res.status(200).json("alles ok");
+        res.status(200).json(`alles ok ${process.env.NODE_ENV}`);
       });
 
 app.use('/auth', authRouter);
