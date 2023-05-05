@@ -37,10 +37,10 @@ authRouter.route('/dozenten')
 
 authRouter.route('/upload')
     .post(async (req, res) => {
-        const { image, id } = req.body; // Extrahieren von Bild und Benutzernamen aus dem Request-Body
+        const { image, folder, id } = req.body; // Extrahieren von Bild und Benutzernamen aus dem Request-Body
       
         // Hochladen des Bildes mit dem Image-Dienst
-        const imgUrl = await imageService.upload(image, 'users', id);
+        const imgUrl = await imageService.upload(image, folder, id);
       
         // Zurückgeben der hochgeladenen Bild-URL
         res.status(200).json({ url: imgUrl });
