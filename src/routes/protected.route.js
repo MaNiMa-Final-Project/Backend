@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 import verifyToken from "../service/jwt/jwt.verifyToken.js";
 import isAdminOrCreator from "../service/authorization/isAdminOrCreator.js";
-import { validateAdmin } from "../utils/authorize.js";
+import isAdmin from "../service/authorization/isAdmin.js";
 
 import * as CourseController from "../controller/course.controller.js";
 import * as UserController from "../controller/user.controller.js";
@@ -42,8 +42,8 @@ protectedRouter.route('/edituser')
 protectedRouter.route('/efoijgvaeipr')
     .put(verifyToken, UserController.pwChange)
 
-protectedRouter.route('/createCreator')
-    .put(verifyToken, validateAdmin, UserController.addCreator)
+protectedRouter.route('/createcreator')
+    .post(verifyToken, isAdmin, UserController.addCreator)
 
 
 

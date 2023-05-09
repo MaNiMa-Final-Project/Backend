@@ -117,13 +117,15 @@ export async function insertNewCreator(userBody) {
         userBody.role = role._id; // Setzt die Rolle des neuen Benutzers auf die "unverified"-Rolle
 
         const newUser = new User(userBody); // Erstellt ein neues "User"-Objekt mit den angegebenen Benutzerdaten
-
         return await newUser.save(); // Speichert den neuen Benutzer in der Datenbank und gibt das neue Benutzer-Objekt zurück
 
     } catch (error) {
         if ( (error.hasOwnProperty('code')) && (error.code === 11000) ) { // Wenn ein eindeutiger Indexverstoß aufgetreten ist, wirft die Funktion einen Fehler mit dem Statuscode 409 (Conflict)
             throw new Error('Username or Email already used', {cause: 409})
-        } else throw new Error('unknown problem - todo', {cause: 400})
+        } else {
+            console.error(error)
+            console.log(error);
+        }
     }
 }
 
@@ -142,7 +144,14 @@ export async function insertNewUser(userBody) {
     } catch (error) {
         if ( (error.hasOwnProperty('code')) && (error.code === 11000) ) { // Wenn ein eindeutiger Indexverstoß aufgetreten ist, wirft die Funktion einen Fehler mit dem Statuscode 409 (Conflict)
             throw new Error('Username or Email already used', {cause: 409})
-        } else throw new Error('unknown problem - todo', {cause: 400})
+        } else {
+            console.error(error)
+            console.log(error)
+            console.log('wtf');
+            throw new Error('unknown problem - todo', {cause: 400})
+
+        }
+        
     }
 }
 

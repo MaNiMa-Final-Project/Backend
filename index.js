@@ -13,8 +13,6 @@ import cookieParser from 'cookie-parser';
 
 import * as imageService from './src/service/cloudinary.service.js';
 
-
-
 //import { startMailService } from './src/service/mailVerification.js';
 
 // Lade Umgebungsvariablen  aus der .env Datei
@@ -32,11 +30,16 @@ app.use(cookieParser());
 
 // Middleware fuer CROSS-ORIGIN-REQUEST
 app.use(cors({
-    origin: 'http://localhost:5000',
+    origin: process.env.CORS_ORIGIN,
     credentials: true
 }));
 
 // --------------------- ROUTES -------------------------
+
+app.route('/')
+    .get((req, res) => {
+        res.status(200).json(`alles ok ${process.env.NODE_ENV}`);
+      });
 
 app.use('/auth', authRouter);
 
