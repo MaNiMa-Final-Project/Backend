@@ -1,4 +1,5 @@
 import * as CourseModel from "../model/course.model.js";
+import * as UserModel from "../model/user.model.js"
 import * as imageService from "../service/cloudinary.service.js";
 
 
@@ -42,6 +43,28 @@ export async function getMultipleCourses(req, res) {
     
 }
 
+export async function getCoursesByCreator(req, res) {
+    const creatorId = req.params.id
+
+    try {
+
+        let courses = await CourseModel.getCoursesByCreator(creatorId);
+        let creatorData = await UserModel.findUserById(creatorId)
+
+        let response = {
+            creatorData: creatorData,
+            courses: courses
+        }
+
+        res.send(response)
+        
+    } catch (error) {
+        if(!error.cause) res.status(400).send(error.message)
+        else res.status(error.cause).send(error.message)
+    }
+
+}
+
 export async function createCourse(req, res) {
     let newCourse = req.body
     try {
@@ -51,7 +74,7 @@ export async function createCourse(req, res) {
         console.log("🚀 ~ file: course.controller.js:73 ~ newCourse.image:", newCourse.image)
 
 
-        // const response = await CourseModel.insertNewCourse(newCourse);
+        const response = await CourseModel.insertNewCourse(newCourse);
 
         res.send("response");
         

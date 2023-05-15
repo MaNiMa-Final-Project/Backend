@@ -38,6 +38,9 @@ authRouter.route('/all')
 authRouter.route('/dozenten')
     .get(UserController.getAllCreators)
 
+authRouter.route('/creator/:id')
+    .get(CourseController.getCoursesByCreator)
+
 authRouter.route('/upload')
     .post(async (req, res) => {
         const { image, folder, id } = req.body; // Extrahieren von Bild und Benutzernamen aus dem Request-Body
