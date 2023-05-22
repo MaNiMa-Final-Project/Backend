@@ -84,6 +84,7 @@ export async function changeUserRole(req, res) {
 export async function registerNewUser(req, res) {
     let newUser = req.body;
 
+
     const salt = await bcrypt.genSalt(10);
     const verificationToken = md5(salt);
 

@@ -18,28 +18,28 @@ authRouter.route('/validate-token')
 
 // Routen Definition fuer /register
 authRouter.route('/register')
-    .post(UserController.registerNewUser)
+    .post(UserController.registerNewUser);
 
 authRouter.route('/register/email')
-    .post(UserController.validateUserEmail)
+    .post(UserController.validateUserEmail);
 
 // Routen Definition fuer /login
 authRouter.route('/login')
-    .post(UserController.userLogin)
+    .post(UserController.userLogin);
 
 // Routen Definition fuer /login
 authRouter.route('/logout')
-    .get(UserController.userLogout)
+    .get(UserController.userLogout);
 
     // Routen Definition fuer /register
 authRouter.route('/all')
-    .get(CourseController.getAllCourses)
+    .get(CourseController.getAllCourses);
 
 authRouter.route('/dozenten')
-    .get(UserController.getAllCreators)
+    .get(UserController.getAllCreators);
 
 authRouter.route('/creator/:id')
-    .get(CourseController.getCoursesByCreator)
+    .get(CourseController.getCoursesByCreator);
 
 authRouter.route('/upload')
     .post(async (req, res) => {
@@ -55,3 +55,5 @@ authRouter.route('/upload')
     
 
 export default authRouter;
+
+//c_crop,h_435,w_435/c_scale,w_300/

@@ -87,7 +87,7 @@ export async function insertNewCourse(courseBody) {
 
 // DB-Funktion zum Abrufen aller Kurs-Eintraege
 export async function getAll() {
-    return await Course.find({});
+    return await Course.find({}).populate('creator');
 }
 
 export async function getSeveralCourses(ids) {
