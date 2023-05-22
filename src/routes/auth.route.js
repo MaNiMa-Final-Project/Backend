@@ -38,14 +38,16 @@ authRouter.route('/all')
 authRouter.route('/dozenten')
     .get(UserController.getAllCreators);
 
-authRouter.route('/dozenten')
-    .get(UserController.getAllCreators);
-
-authRouter.route('/addtofav')
+    authRouter.route('/addtofav')
     .put(verifyToken ,UserController.addToFav);
 
 authRouter.route('/removefromfav')
     .put(verifyToken ,UserController.removeCourseFromUserNotes)
+
+
+
+authRouter.route('/creator/:id')
+    .get(CourseController.getCoursesByCreator);
 
 authRouter.route('/upload')
     .post(async (req, res) => {
@@ -63,3 +65,9 @@ authRouter.route('/upload')
 export default authRouter;
 
 //c_crop,h_435,w_435/c_scale,w_300/
+
+
+
+
+
+
