@@ -67,9 +67,7 @@ export async function getCoursesByCreator(req, res) {
 
 export async function createCourse(req, res) {
     let newCourse = req.body
-    console.log("🚀 ---------------------------------------------------------🚀")
-    console.log("🚀 ~ file: course.controller.js:70 ~ newCourse:", newCourse)
-    console.log("🚀 ---------------------------------------------------------🚀")
+
     try {
 
         const imgURl = await imageService.upload(newCourse.image,"courses", newCourse.title);

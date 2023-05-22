@@ -172,9 +172,6 @@ export async function userLogin(req, res) {
           secure: process.env.NODE_ENV ? true : false,
           expires: new Date(Date.now() + duration)
       }
-      console.log("🚀 ----------------------------------------------------🚀")
-      console.log("🚀 ~ file: user.controller.js:173 ~ options:", options)
-      console.log("🚀 ----------------------------------------------------🚀")
 
       // Setze Cookie mit Token
       res.cookie('access_token', `Bearer ${token}`, options)
@@ -201,6 +198,44 @@ export async function editUser(req, res) {
   try {
 
     let user = await UserModel.editUser(userId, body);
+    res.send(user);
+    
+  } catch (error) {
+    // wenn ein Fehler auftritt, sende eine Fehlermeldung an den Client
+    if(!error.cause) res.status(400).send(error.message)
+    else res.status(error.cause).send(error.message)
+  }
+}
+
+export async function addToFav(req, res) {
+  const userId = req.tokenPayload.id;
+
+  const body = req.body;
+
+
+  try {
+
+    let user = await UserModel.addCourseToUserNotes(userId, body);
+    res.send(user);
+    
+  } catch (error) {
+    // wenn ein Fehler auftritt, sende eine Fehlermeldung an den Client
+    if(!error.cause) res.status(400).send(error.message)
+    else res.status(error.cause).send(error.message)
+  }
+}
+
+export async function removeCourseFromUserNotes(req, res) {
+  const userId = req.tokenPayload.id;
+
+
+  const body = req.body;
+
+
+
+  try {
+
+    let user = await UserModel.removeCourseFromUserNotes(userId, body);
     res.send(user);
     
   } catch (error) {
